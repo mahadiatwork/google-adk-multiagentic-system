@@ -59,12 +59,10 @@ def create_coding_phase(model_name: str = None):
             task_prompt=state.task_prompt,
             modality=state.modality
         )
-        from config.agent_configs import DEFAULT_MODEL
-        default_model = model_name or DEFAULT_MODEL
         cto_response = run_agent(cto_agent, lang_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "CTO", "Coding", default_model,
+            "CTO", "Coding", cto_agent.model,
             input_text=lang_prompt, output_text=str(cto_response)
         )
         language = extract_language(cto_response)
@@ -79,7 +77,7 @@ def create_coding_phase(model_name: str = None):
         programmer_response = run_agent(programmer_agent, coding_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "Programmer", "Coding", default_model,
+            "Programmer", "Coding", programmer_agent.model,
             input_text=coding_prompt, output_text=str(programmer_response)
         )
         

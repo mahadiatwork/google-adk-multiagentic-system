@@ -1,0 +1,55 @@
+Traceback (most recent call last):
+  File "E:\Education\Research\Vibe Coding - AI Assisted Software Development\Professors Recommendation\multiagent-using-google-adk\test_openrouter.py", line 36, in test_openrouter
+    agent = create_base_agent(
+        system_prompt="You are a helpful assistant.",
+        agent_name="TestAgent",
+        model_name=model
+    )
+  File "E:\Education\Research\Vibe Coding - AI Assisted Software Development\Professors Recommendation\multiagent-using-google-adk\src\agents\base_agent.py", line 38, in create_base_agent
+    agent = OpenRouterAgent(
+        name=agent_name,
+        model=model,
+        instruction=system_prompt
+    )
+  File "E:\Education\Research\Vibe Coding - AI Assisted Software Development\Professors Recommendation\multiagent-using-google-adk\src\agents\openrouter_agent.py", line 29, in __init__
+    self.client = openai.OpenAI(
+                  ~~~~~~~~~~~~~^
+        base_url="https://openrouter.ai/api/v1",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        }
+        ^
+    )
+    ^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_client.py", line 123, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_base_client.py", line 847, in __init__
+    self._client = http_client or SyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        follow_redirects=True,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_base_client.py", line 745, in __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+TypeError: Client.__init__() got an unexpected keyword argument 'proxies'
+============================================================
+OpenRouter Integration Test
+============================================================
+鉁?OPENROUTER_API_KEY found
+馃摗 Testing model: qwen/qwen3-coder:free
+
+Initializing OpenRouterAgent...
+鉂?Initialization failed: Client.__init__() got an unexpected keyword argument 'proxies'

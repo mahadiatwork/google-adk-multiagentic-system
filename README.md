@@ -1,90 +1,84 @@
-# Google ADK Multi-Agent System
+# OpenRouter Multi-Agent Development System
 
-A minimal viable multi-agent software development system using Google ADK that replicates ChatDev's core functionality. The system orchestrates multiple specialized agents to develop software from natural language descriptions.
+A specialized multi-agent software development system that uses OpenRouter AI to orchestrate multiple agents (CEO, CPO, CTO, Programmer, Reviewer, and Tester) to develop software from natural language descriptions.
 
-## Features
+## 🚀 Recent Improvements
 
-- **Demand Analysis**: CEO and CPO agents analyze requirements and determine product modality
-- **Coding**: CTO and Programmer agents write code based on requirements
-- **Code Review**: Automated review loop with Reviewer and Programmer agents
-- **Testing**: Automated testing loop with Test Engineer and Programmer agents
+- **Dedicated Role Models**: Refactored the architecture to allow specific LLM models for each agent via `.env` overrides. This allows high-IQ models for coding and low-cost models for strategy.
+- **Robustness Fixes**: 
+    - Resolved `TypeError: Client.__init__() got an unexpected keyword argument 'proxies'` and `UnicodeEncodeError` in Windows terminals.
+    - Upgraded `openai` and `httpx` compatibility.
+- **Strict Code Parser**: Implemented a stricter code extraction tool (`code_manager.py`) to prevent capturing sentences as filenames and ensure full file content integrity.
+- **Advanced Usage Tracking**: Detailed cost and token tracking across all phases and agents, calibrated for the latest OpenRouter models.
 
-## Installation
+## 🛠 Features
 
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
+- **Demand Analysis**: CEO and CPO agents analyze requirements (`google/gemini-2.5-flash` recommended).
+- **Coding**: CTO and Programmer agents write the core implementation (`qwen/qwen-2.5-coder-32b-instruct` recommended).
+- **Code Review**: Automated adversarial review loop (`deepseek/deepseek-chat` recommended).
+- **Testing**: Automated testing loop that executes local code and fixes bugs based on error reports.
+
+## 📋 Installation
+
+1. **Install dependencies**:
+   ```powershell
+   pip install -r requirements.txt
+   ```
+
+2. **Set up Environment Variables**:
+   Create a `.env` file in the root directory:
+   ```env
+   OPENROUTER_API_KEY="your_api_key"
+   
+   # === ROLE-SPECIFIC MODELS (Optimized for Budget & IQ) ===
+   MODEL_CEO="google/gemini-2.5-flash"
+   MODEL_CPO="google/gemini-2.5-flash"
+   MODEL_CTO="qwen/qwen-2.5-coder-32b-instruct"
+   MODEL_PROGRAMMER="qwen/qwen-2.5-coder-32b-instruct"
+   MODEL_REVIEWER="deepseek/deepseek-chat"
+   MODEL_TESTER="deepseek/deepseek-chat"
+   
+   # FALLBACK MODEL
+   OPENROUTER_MODEL="google/gemini-2.5-flash"
+   ```
+
+## 🎮 Usage
+
+### 1. Interactive Mode
+Run the interactive script to build a project step-by-step:
+```powershell
+python run_project.py
 ```
 
-2. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env and add your GOOGLE_API_KEY
+### 2. CLI Mode (Direct)
+Specify the task and project name via command-line arguments:
+```powershell
+python src/main.py --task "Create a simple login page with validation" --name "login-page"
 ```
-
-## Usage
-
-Run the system with a task description:
-
-```bash
-python src/main.py --task "Create a hello world program in Python" --name "hello_world"
-```
-
-**Note**: Make sure you're in the project root directory when running this command.
 
 ### Command-line Arguments
-
 - `--task`: Task description (required)
 - `--name`: Project name (required)
-- `--model`: Gemini model to use (default: gemini-pro)
-- `--output-dir`: Output directory path (default: ./output)
+- `--model`: Base model ID (optional, overrides OPENROUTER_MODEL)
+- `--output-dir`: Output directory path (default: `./output`)
+- `--max-review-iterations`: Maximum code review iterations (default: 3)
+- `--max-test-iterations`: Maximum test iterations (default: 3)
 
-## Example
+## 🧪 Testing & Verification
 
-```bash
-python src/main.py --task "Create a simple calculator with add, subtract, multiply, and divide functions" --name "calculator"
+To verify your OpenRouter connection and agent initialization:
+```powershell
+python test_openrouter.py
 ```
+This script checks your API key, model connectivity, and verifies that the `OpenRouterAgent` can successfully communicate with the AI.
 
-The generated code will be saved in the `output/` directory.
+## 📂 Project Structure
 
-## Architecture
+- `src/agents/`: Specialized agent classes powered by `OpenRouterAgent`.
+- `src/phases/`: Multi-agent collaboration workflows (Demand Analysis -> Coding -> Review -> Testing).
+- `src/tools/`: Utilities for robust code extraction, file management, and usage tracking.
+- `config/`: System prompts for each agent role and global model settings.
 
-The system uses a sequential chain of phases:
-
-1. **Demand Analysis**: Determines product type and requirements
-2. **Coding**: Generates initial code
-3. **Code Review**: Iterative review and improvement loop
-4. **Testing**: Iterative testing and bug fixing loop
-
-Each phase uses specialized agents that communicate through a shared development state.
-
-## Configuration
-
-Agent configurations and prompts can be customized in:
-- `config/agent_configs.py`: Agent role definitions and system prompts
-- `config/prompts.py`: Phase-specific prompts
-
-## Project Structure
-
-```
-google-adk-chatdev/
-├── README.md
-├── requirements.txt
-├── config/
-│   ├── agent_configs.py
-│   └── prompts.py
-├── src/
-│   ├── main.py
-│   ├── state.py
-│   ├── agents/
-│   ├── phases/
-│   ├── tools/
-│   └── chain/
-├── output/
-└── tests/
-```
-
-## License
-
+## 📄 License
 MIT
-
+# multiagentic-ai-google-sdk

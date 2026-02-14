@@ -1,0 +1,15 @@
+============================================================
+OpenRouter Integration Test
+============================================================
+鉁?OPENROUTER_API_KEY found
+馃摗 Testing model: qwen/qwen3-coder:free
+
+Initializing OpenRouterAgent...
+鉁?Agent initialized: OpenRouterAgent
+
+Sending test query to OpenRouter...
+(This verifies connectivity and API key validity)
+
+Response: Error contacting OpenRouter: Error code: 502 - {'error': {'message': 'Failed to authenticate request with Clerk', 'code': 502}}
+
+鈿狅笍 Received response but it might not be what was expected.

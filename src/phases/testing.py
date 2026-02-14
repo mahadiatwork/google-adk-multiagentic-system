@@ -70,12 +70,10 @@ def create_testing_phase(model_name: str = None, max_iterations: int = 3):
             error_summary=state.error_summary,
             codes=state.get_codes_formatted()
         )
-        from config.agent_configs import DEFAULT_MODEL
-        default_model = model_name or DEFAULT_MODEL
         tester_response = run_agent(tester_agent, test_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "Tester", "Testing", default_model,
+            "Tester", "Testing", tester_agent.model,
             input_text=test_prompt, output_text=str(tester_response)
         )
         
@@ -93,7 +91,7 @@ def create_testing_phase(model_name: str = None, max_iterations: int = 3):
         fix_response = run_agent(programmer_agent, fix_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "Programmer", "Testing", default_model,
+            "Programmer", "Testing", programmer_agent.model,
             input_text=fix_prompt, output_text=str(fix_response)
         )
         

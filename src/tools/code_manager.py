@@ -25,17 +25,43 @@ def extract_code_blocks(text: str) -> Dict[str, str]:
     # Matches: FILENAME\n```LANGUAGE\nCODE\n```
     pattern = r'(?:^|\n)([A-Za-z0-9_\-\.\/]+\.(?:py|js|ts|java|cpp|c|html|css|json|yaml|yml|md|txt|sh|bat|ps1))(?:\n|$)(?:```(?:python|javascript|typescript|java|cpp|c|html|css|json|yaml|bash|shell|powershell|plaintext)?\n(.*?)```|```\n(.*?)```)'
     
-    # Try more flexible pattern
-    # Match filename on its own line, then code block
+    # Try more flexible line-by-line parsing
     lines = text.split('\n')
     i = 0
     while i < len(lines):
         line = lines[i].strip()
         
-        # Check if line looks like a filename
-        if line and ('.' in line) and not line.startswith('```') and not line.startswith('#'):
+        # Check if line looks like a filename indicator
+        # Support matches like: "index.html", "FILENAME: index.html", "File: index.html", "## index.html"
+        clean_line = line
+        prefixes_to_strip = ["FILENAME:", "File:", "Filename:", "##", "**"]
+        for prefix in prefixes_to_strip:
+            if clean_line.upper().startswith(prefix.upper()):
+                clean_line = clean_line[len(prefix):].strip()
+        
+        clean_line = clean_line.strip("*#: ")
+        
+        # Stricter filename validation
+        # 1. Must contain a dot and a valid extension
+        # 2. Must be relatively short (< 100 chars)
+        # 3. Must NOT contain spaces
+        # 4. Must NOT start with common sentence words
+        valid_extensions = ('.py', '.js', '.ts', '.java', '.cpp', '.c', '.h', '.html', '.css', '.json', '.yaml', '.yml', '.md', '.sh', '.bat', '.ps1', '.txt')
+        
+        is_potential_filename = (
+            clean_line and 
+            not clean_line.startswith('```') and
+            any(clean_line.lower().endswith(ext) for ext in valid_extensions) and
+            ' ' not in clean_line and
+            len(clean_line) < 100
+        )
+        
+        if is_potential_filename:
             # Potential filename
-            filename = line
+            filename = clean_line
+            # Remove any characters invalid for filenames (especially :)
+            filename = re.sub(r'[:*?"<>|]', '', filename)
+            
             # Look for code block starting on next non-empty line
             j = i + 1
             while j < len(lines) and not lines[j].strip():
@@ -43,7 +69,6 @@ def extract_code_blocks(text: str) -> Dict[str, str]:
             
             if j < len(lines) and lines[j].strip().startswith('```'):
                 # Found code block
-                lang = lines[j].strip()[3:].strip()  # Extract language
                 code_lines = []
                 j += 1
                 

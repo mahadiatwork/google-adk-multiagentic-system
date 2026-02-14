@@ -1,7 +1,4 @@
-google-adk
-google-generativeai
+openai
 python-dotenv
 pydantic
-nest-asyncio
 httpx
-

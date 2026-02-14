@@ -38,8 +38,8 @@ def parse_arguments():
     parser.add_argument(
         "--model",
         type=str,
-        default="gemini-2.0-flash-exp",
-        help="Gemini model to use (default: gemini-2.0-flash-exp)"
+        default=None,
+        help="OpenRouter model to use. If not provided, the system will use role-specific models from .env (MODEL_CEO, etc.) or fall back to OPENROUTER_MODEL."
     )
     parser.add_argument(
         "--output-dir",
@@ -69,8 +69,8 @@ def main():
     load_dotenv()
     
     # Check for API key
-    if not os.getenv("GOOGLE_API_KEY"):
-        print("Error: GOOGLE_API_KEY environment variable not set")
+    if not os.getenv("OPENROUTER_API_KEY"):
+        print("Error: OPENROUTER_API_KEY environment variable not set")
         print("Please set it in your .env file or environment")
         sys.exit(1)
     
@@ -84,11 +84,13 @@ def main():
     state.output_directory = args.output_dir
     
     print("=" * 60)
-    print("Google ADK Multi-Agent Development System")
+    print("OpenRouter Multi-Agent Development System")
     print("=" * 60)
     print(f"Task: {args.task}")
     print(f"Project: {args.name}")
-    print(f"Model: {args.model}")
+    base_model = args.model or os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
+    print(f"Base Model: {base_model}")
+    print(f"Role Models: Enabled (Check .env for MODEL_<ROLE> overrides)")
     print(f"Output: {args.output_dir}")
     print("=" * 60)
     print()
@@ -108,7 +110,7 @@ def main():
         end_time = time.time()
         
         # Finish usage tracking
-        state.usage_tracker.finish(model=args.model)
+        state.usage_tracker.finish(model=base_model)
         
         print()
         print("=" * 60)

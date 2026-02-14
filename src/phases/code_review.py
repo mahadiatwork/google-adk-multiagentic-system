@@ -41,12 +41,10 @@ def create_code_review_phase(model_name: str = None, max_iterations: int = 3):
             language=state.language,
             codes=state.get_codes_formatted()
         )
-        from config.agent_configs import DEFAULT_MODEL
-        default_model = model_name or DEFAULT_MODEL
         review_response = run_agent(reviewer_agent, review_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "Reviewer", "Code Review", default_model,
+            "Reviewer", "Code Review", reviewer_agent.model,
             input_text=review_prompt, output_text=str(review_response)
         )
         
@@ -68,7 +66,7 @@ def create_code_review_phase(model_name: str = None, max_iterations: int = 3):
         fix_response = run_agent(programmer_agent, fix_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "Programmer", "Code Review", default_model,
+            "Programmer", "Code Review", programmer_agent.model,
             input_text=fix_prompt, output_text=str(fix_response)
         )
         

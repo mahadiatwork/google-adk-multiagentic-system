@@ -58,10 +58,8 @@ def create_demand_analysis_phase(model_name: str = None):
         # Run CEO agent
         ceo_response = run_agent(ceo_agent, prompt, state=state)
         # Track API usage
-        from config.agent_configs import DEFAULT_MODEL
-        default_model = model_name or DEFAULT_MODEL
         state.usage_tracker.record_api_call_with_text(
-            "CEO", "Demand Analysis", default_model,
+            "CEO", "Demand Analysis", ceo_agent.model,
             input_text=prompt, output_text=str(ceo_response)
         )
         
@@ -70,7 +68,7 @@ def create_demand_analysis_phase(model_name: str = None):
         cpo_response = run_agent(cpo_agent, cpo_prompt, state=state)
         # Track API usage
         state.usage_tracker.record_api_call_with_text(
-            "CPO", "Demand Analysis", default_model,
+            "CPO", "Demand Analysis", cpo_agent.model,
             input_text=cpo_prompt, output_text=str(cpo_response)
         )
         

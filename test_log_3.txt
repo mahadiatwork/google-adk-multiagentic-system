@@ -1,0 +1,15 @@
+============================================================
+OpenRouter Integration Test
+============================================================
+[OK] OPENROUTER_API_KEY found
+DEBUG: Testing model: google/gemini-2.0-flash-001
+
+Initializing OpenRouterAgent...
+[OK] Agent initialized: OpenRouterAgent
+
+Sending test query to OpenRouter...
+(This verifies connectivity and API key validity)
+
+Response: Error contacting OpenRouter: Error code: 502 - {'error': {'message': 'Failed to authenticate request with Clerk', 'code': 502}}
+
+鈿狅笍 Received response but it might not be what was expected.

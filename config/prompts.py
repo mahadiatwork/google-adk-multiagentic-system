@@ -31,14 +31,19 @@ Task: {task_prompt}
 Modality: {modality}
 Language: {language}
 
-Please write complete, runnable code. Use the following format for each file:
+Please write complete, runnable code for every file needed. Use the following format for each file:
 
-FILENAME
-```LANGUAGE
+filename.extension
+```language
 CODE_CONTENT
 ```
 
-Ensure the code is well-structured, documented, and follows best practices.
+CRITICAL INSTRUCTIONS:
+1. Provide the FULL content for every file. Partial code or snippets are NOT allowed.
+2. DO NOT include file trees (like └──) or directory diagrams.
+3. DO NOT include installation instructions (like "Run pip install...") outside of a README.md if you choose to provide one.
+4. Each file must be preceded by its filename on a single line, followed immediately by its code block.
+5. Do not include any sentences that look like filenames between code blocks.
 """
 
 CODE_REVIEW_PROMPT = """Review the following code:
@@ -89,11 +94,15 @@ Feedback:
 Current Code:
 {codes}
 
-Please fix the issues and provide the corrected code in the same format:
-FILENAME
-```LANGUAGE
+Please fix the issues and provide the corrected code for ALL files. Even if you only modified one file, provide the FULL corrected code for that file. 
+
+Format:
+filename.extension
+```language
 CODE_CONTENT
 ```
+
+Follow the same critical instructions: no file trees, no snippets, full file content only.
 """
 
 

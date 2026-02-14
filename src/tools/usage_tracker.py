@@ -37,55 +37,41 @@ class UsageSummary:
         self.total_input_tokens = sum(call.input_tokens for call in self.api_calls)
         self.total_output_tokens = sum(call.output_tokens for call in self.api_calls)
     
-    def calculate_cost(self, model: str = "gemini-pro"):
-        """Calculate estimated cost based on model pricing.
+    def calculate_cost(self, model: str = "google/gemini-2.0-flash-001"):
+        """Calculate estimated cost based on OpenRouter model pricing.
         
-        Pricing (as of 2024, check current rates):
-        - gemini-pro: $0.0005/1K input tokens, $0.0015/1K output tokens
-        - gemini-1.5-pro: $1.25/1M input tokens, $5.00/1M output tokens
-        - gemini-1.5-flash: $0.075/1M input tokens, $0.30/1M output tokens
+        Pricing (approximation):
+        - google/gemini-2.0-flash-001: $0.10/1M input, $0.40/1M output
+        - google/gemini-2.0-pro-exp: $0.00/1M (Free tier / Low)
+        - openai/gpt-4o-mini: $0.15/1M input, $0.60/1M output
+        - meta-llama/llama-3.1-405b: $2.00/1M input, $2.00/1M output
         """
         pricing = {
-            "gemini-pro": {
-                "input": 0.0005 / 1000,  # per token
-                "output": 0.0015 / 1000
+            "google/gemini-2.0-flash-001": {
+                "input": 0.10 / 1_000_000,
+                "output": 0.40 / 1_000_000
             },
-            "gemini-1.5-pro": {
-                "input": 1.25 / 1_000_000,
-                "output": 5.00 / 1_000_000
-            },
-            "gemini-1.5-flash": {
-                "input": 0.075 / 1_000_000,
-                "output": 0.30 / 1_000_000
-            },
-            "gemini-2.0-flash-exp": {
-                "input": 0.00 / 1_000_000,  # Free tier
+            "google/gemini-2.0-pro-exp": {
+                "input": 0.00 / 1_000_000,
                 "output": 0.00 / 1_000_000
             },
-            "gemini-3-flash": {
-                "input": 0.50 / 1_000_000,  # Paid Tier
-                "output": 3.00 / 1_000_000
+            "openai/gpt-4o-mini": {
+                "input": 0.15 / 1_000_000,
+                "output": 0.60 / 1_000_000
             },
-            "gemini-3-pro": {
-                "input": 2.00 / 1_000_000,  # Paid Tier (<= 200k context)
-                "output": 12.00 / 1_000_000
+            "meta-llama/llama-3.1-405b": {
+                "input": 2.00 / 1_000_000,
+                "output": 2.00 / 1_000_000
             }
         }
         
-        # Handle model name variations
+        # Handle model name variations or fallback
         model_key = model.lower()
-        if "1.5-pro" in model_key or "1_5_pro" in model_key:
-            model_key = "gemini-1.5-pro"
-        elif "1.5-flash" in model_key or "1_5_flash" in model_key:
-            model_key = "gemini-1.5-flash"
-        elif "2.0" in model_key or "2_0" in model_key:
-            model_key = "gemini-2.0-flash-exp"
-        elif "gemini-3" in model_key:
-            model_key = "gemini-3-flash"
-        else:
-            model_key = "gemini-pro"
-        
-        model_pricing = pricing.get(model_key, pricing["gemini-pro"])
+        if model_key not in pricing:
+            # Default to gemini-flash pricing if unknown
+            model_key = "google/gemini-2.0-flash-001"
+            
+        model_pricing = pricing.get(model_key, pricing["google/gemini-2.0-flash-001"])
         input_cost = self.total_input_tokens * model_pricing["input"]
         output_cost = self.total_output_tokens * model_pricing["output"]
         self.estimated_cost = input_cost + output_cost

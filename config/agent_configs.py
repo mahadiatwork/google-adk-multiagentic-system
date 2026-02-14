@@ -38,13 +38,19 @@ PROGRAMMER_SYSTEM_PROMPT = """You are a skilled software programmer. Your role i
 3. Fix bugs and improve code based on feedback
 4. Follow best practices and coding standards
 
-When writing code, use the following format:
-FILENAME
-```LANGUAGE
+When writing code, use the following format for each file:
+actual_filename.extension
+```language
 CODE_CONTENT
 ```
 
-Always provide complete, runnable code."""
+Example:
+index.html
+```html
+...
+```
+
+Always provide complete, runnable code. Provide all files needed for the project."""
 
 # Code Reviewer Agent
 REVIEWER_SYSTEM_PROMPT = """You are a senior code reviewer. Your role is to:
@@ -67,20 +73,15 @@ Analyze the test output and error information, then provide a clear summary of i
 If no errors are found, respond with: <INFO>No errors</INFO>"""
 
 # Model configuration
-DEFAULT_MODEL = "gemini-2.5-flash"  # Updated: gemini-1.5-flash is missing
+DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
 DEFAULT_TEMPERATURE = 0.7
 DEFAULT_MAX_TOKENS = 4096
 
 # Rate limiting configuration
-# Delay in seconds between API calls to avoid hitting rate limits (e.g., 5 RPM)
-API_CALL_DELAY_SECONDS = 20
+# Delay in seconds between API calls to avoid hitting rate limits
+API_CALL_DELAY_SECONDS = 0  # OpenRouter handles balancing, but keep for compatibility
 
-# Proxy Configuration
-PROXY_URL = "http://localhost:8080"
-USE_PROXY = os.getenv("USE_PROXY", "false").lower() == "true"
-
-# Proxy Models
-MODEL_CLAUDE_SONNET = "claude-sonnet-4-5-thinking"
-MODEL_GEMINI_PROXY = "gemini-3-flash"
+# OpenRouter Configuration
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 

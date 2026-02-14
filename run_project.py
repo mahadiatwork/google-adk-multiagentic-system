@@ -18,12 +18,12 @@ load_dotenv()
 
 def run_project():
     print("=" * 60)
-    print("🤖 Multi-Agent Development System (Proxy Enabled)")
+    print("🤖 Multi-Agent Development System (OpenRouter Enabled)")
     print("=" * 60)
 
     # Check API key
-    if not os.getenv("GOOGLE_API_KEY"):
-        print("❌ Error: GOOGLE_API_KEY not found!")
+    if not os.getenv("OPENROUTER_API_KEY"):
+        print("❌ Error: OPENROUTER_API_KEY not found!")
         print("Please set it in your .env file")
         sys.exit(1)
 
@@ -46,7 +46,8 @@ def run_project():
     print("\nConfiguration:")
     print(f"  Project: {project_name}")
     print(f"  Output:  {output_dir}")
-    print(f"  Model:   gemini-3-flash (via Proxy)")
+    from config.agent_configs import DEFAULT_MODEL
+    print(f"  Model:   {DEFAULT_MODEL} (via OpenRouter)")
     
     confirm = input("\nStart development? (y/n): ").lower()
     if confirm != 'y':
@@ -65,9 +66,10 @@ def run_project():
         state.project_name = project_name
         state.output_directory = output_dir
         
-        # Create chain with proxy model
+        # Create chain with OpenRouter model
+        from config.agent_configs import DEFAULT_MODEL
         chain = create_development_chain(
-            model_name="gemini-3-flash",
+            model_name=DEFAULT_MODEL,
             max_review_iterations=3,
             max_test_iterations=3
         )
@@ -78,7 +80,7 @@ def run_project():
         
         # Finish usage tracking
         if hasattr(state, 'usage_tracker'):
-            state.usage_tracker.finish(model="gemini-3-flash")
+            state.usage_tracker.finish(model=DEFAULT_MODEL)
         
         print("\n" + "=" * 60)
         print("✅ Project Completed!")
