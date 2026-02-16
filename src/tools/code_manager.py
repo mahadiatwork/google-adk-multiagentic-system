@@ -1,7 +1,33 @@
 """Code extraction and formatting utilities."""
 
 import re
-from typing import Dict
+from typing import Dict, Optional
+
+
+def extract_code_block(llm_output: str) -> str:
+    """
+    Extracts pure Python code from a markdown-formatted LLM response.
+    
+    It captures content within ```python ... ``` or ``` ... ``` blocks.
+    If no backticks are found, it returns the entire stripped string.
+    """
+    # Primary capture: well-formed markdown blocks
+    pattern = r"```(?:python|py)?\n?(.*?)```"
+    match = re.search(pattern, llm_output, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    
+    # Secondary capture: unclosed or malformed blocks
+    if "```" in llm_output:
+        parts = llm_output.split("```")
+        if len(parts) >= 2:
+            # Take the content after the first backticks
+            content = parts[1]
+            # Strip language marker if it's there at the start
+            content = re.sub(r'^(?:python|py|javascript|js|ts|html|css|json|yaml|sh|bash|text)\s*\n', '', content, flags=re.IGNORECASE)
+            return content.strip()
+            
+    return llm_output.strip()
 
 
 def extract_code_blocks(text: str) -> Dict[str, str]:

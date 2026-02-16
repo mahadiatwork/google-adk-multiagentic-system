@@ -5,7 +5,8 @@ from src.agents.programmer_agent import create_programmer_agent
 from src.state import DevelopmentState
 from src.tools.agent_runner import run_agent
 from config.prompts import TESTING_PROMPT, FIX_CODE_PROMPT
-from src.tools.test_runner import run_tests, parse_test_errors
+from src.tools.test_runner import run_tests, parse_test_errors, execute_and_heal
+import os
 
 
 def test_condition(result: str, state: DevelopmentState) -> bool:
@@ -49,8 +50,26 @@ def create_testing_phase(model_name: str = None, max_iterations: int = 3):
         """Handler for test iteration."""
         # Run tests
         if state.output_directory and state.language:
-            success, test_output = run_tests(state.output_directory, state.language)
-            state.test_reports = test_output
+            # If healing is enabled, use the self-healing subprocess loop for Python projects
+            if getattr(state, 'healing', False) and state.language.lower() == "python":
+                print("Self-Healing Mode: Running execute_and_heal on generated files...")
+                healing_results = []
+                for filename in state.codes.keys():
+                    if filename.endswith('.py'):
+                        filepath = os.path.join(state.output_directory, filename)
+                        success_healing = execute_and_heal(filepath)
+                        healing_results.append(f"{filename}: {'Fixed/Success' if success_healing else 'Failed'}")
+                        
+                        # Reload fixed code back into state
+                        with open(filepath, 'r') as f:
+                            state.codes[filename] = f.read()
+                
+                test_output = "\n".join(healing_results)
+                state.test_reports = test_output
+                success = all("Success" in r or "Fixed" in r for r in healing_results)
+            else:
+                success, test_output = run_tests(state.output_directory, state.language, state.modality)
+                state.test_reports = test_output
             
             # Parse errors
             if not success:

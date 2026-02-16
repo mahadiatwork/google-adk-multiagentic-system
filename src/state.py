@@ -17,6 +17,7 @@ class DevelopmentState:
         self.error_summary: str = ""
         self.project_name: str = ""
         self.output_directory: str = ""
+        self.healing: bool = False
         # Initialize usage tracker
         from src.tools.usage_tracker import UsageTracker
         self.usage_tracker: UsageTracker = UsageTracker()

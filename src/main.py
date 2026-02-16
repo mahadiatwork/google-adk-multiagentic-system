@@ -59,6 +59,11 @@ def parse_arguments():
         default=3,
         help="Maximum test iterations (default: 3)"
     )
+    parser.add_argument(
+        "--healing",
+        action="store_true",
+        help="Enable self-healing mode for generated code"
+    )
     
     return parser.parse_args()
 
@@ -82,6 +87,7 @@ def main():
     state.task_prompt = args.task
     state.project_name = args.name
     state.output_directory = args.output_dir
+    state.healing = args.healing
     
     print("=" * 60)
     print("OpenRouter Multi-Agent Development System")
@@ -91,6 +97,7 @@ def main():
     base_model = args.model or os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
     print(f"Base Model: {base_model}")
     print(f"Role Models: Enabled (Check .env for MODEL_<ROLE> overrides)")
+    print(f"Healing Mode: {'Enabled' if args.healing else 'Disabled'}")
     print(f"Output: {args.output_dir}")
     print("=" * 60)
     print()
